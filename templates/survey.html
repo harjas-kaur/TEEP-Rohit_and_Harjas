@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey</title>
+    <link rel="stylesheet" href="static/styles.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+    <div class="container">
+        <h1>Survey</h1>
+        <div class="question-number">Question <span id="questionNumber">1</span></div> <!-- Display question number -->
+        <div class="image-container">
+            <div>
+                <h3>Input Image</h3>
+                <img id="inputImage" alt="Input Image">
+            </div>
+            <div id="outputImageContainer" style="display: none;">
+                <h3>Output Image</h3>
+                <img id="outputImage" alt="Output Image">
+            </div>
+        </div>
+        <div class="text-container">
+            <h3>Input Text</h3>
+            <p id="inputText">Loading...</p>
+        </div>
+        <div class="text-container" id="outputTextContainer" style="display: none;">
+            <h3>Output Text</h3>
+            <p id="outputText">Loading...</p>
+        </div>
+        <div class="options">
+            <input type="hidden" id="questionId" value="1">
+            <div class="option">
+                <input type="radio" name="human_answer" id="option1" value="1">
+                <label for="option1">Option 1</label>
+            </div>
+            <div class="option">
+                <input type="radio" name="human_answer" id="option2" value="2">
+                <label for="option2">Option 2</label>
+            </div>
+            <div class="option">
+                <input type="radio" name="human_answer" id="option3" value="3">
+                <label for="option3">Option 3</label>
+            </div>
+            <div class="option">
+                <input type="radio" name="human_answer" id="option4" value="4">
+                <label for="option4">Option 4</label>
+            </div>
+            <div class="option">
+                <input type="radio" name="human_answer" id="option5" value="5">
+                <label for="option5">Option 5</label>
+            </div>
+            <div class="option">
+                <input type="radio" name="human_answer" id="option6" value="6">
+                <label for="option6">Option 6</label>
+            </div>
+        </div>
+        <button onclick="submitSurvey()">Submit</button>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadQuestion();
+        });
+
+        function loadQuestion() {
+            document.getElementById('questionNumber').textContent = currentQuestion;
+
+            fetch('/input_text')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('inputText').textContent = data.original_text;
+                });
+
+            fetch('/input_image')
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('inputImage').src = url;
+                });
+
+            fetch('/output_data')
+                .then(response => response.json())
+                .then(data => {
+                    const expType = data.exp_type;
+                    if (expType === 'image' || expType === 'both') {
+                        document.getElementById('outputImageContainer').style.display = 'block';
+                        fetch(data.exp_image_url)
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const url = URL.createObjectURL(blob);
+                                document.getElementById('outputImage').src = url;
+                            });
+                    } else {
+                        document.getElementById('outputImageContainer').style.display = 'none';
+                    }
+                    if (expType === 'text' || expType === 'both') {
+                        document.getElementById('outputTextContainer').style.display = 'block';
+                        document.getElementById('outputText').textContent = data.exp_text;
+                    } else {
+                        document.getElementById('outputTextContainer').style.display = 'none';
+                    }
+                });
+        }
+
+        function submitSurvey() {
+            const humanAnswer = document.querySelector('input[name="human_answer"]:checked');
+            if (!humanAnswer) {
+                alert("Please select an option.");
+                return;
+            }
+
+            const questionId = currentQuestion;
+            const humanAnswerValue = humanAnswer.value;
+
+            fetch('/submit_survey', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question_id: questionId,
+                    human_answer: humanAnswerValue
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'finished') {
+                    saveToExcelAndRedirect(); // Save to Excel and Redirect
+                } else {
+                    currentQuestion++;
+                    loadQuestion();
+                }
+            });
+        }
+
+        function saveToExcelAndRedirect() {
+            saveToExcel()
+                .then(() => {
+                    window.location.href = '/finish'; // Redirect to finish page
+                })
+                .catch(error => {
+                    console.error('Error saving to Excel:', error);
+                });
+        }
+
+        function saveToExcel() {
+            const formData = new FormData();
+            formData.append('question_id', document.getElementById('questionId').value);
+            formData.append('human_answer', document.querySelector('input[name="human_answer"]:checked').value);
+
+            return fetch('/save_to_excel', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'survey_data.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error saving to Excel:', error);
+            });
+        }
+    </script>
+</body>
+</html>

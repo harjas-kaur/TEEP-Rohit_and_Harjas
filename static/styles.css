@@ -1,0 +1,116 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: #111;
+    color: #eee;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.image-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.image-container img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+.text-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.options {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.option {
+    margin: 5px;
+}
+
+.options label {
+    display: block;
+    cursor: pointer;
+    background-color: #333;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+    color: #eee;
+}
+
+.options label:hover {
+    background-color: #444;
+}
+
+.options input[type="radio"] {
+    display: none;
+}
+
+.options input[type="radio"]:checked + label {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.options input[type="radio"]:checked + label:hover {
+    background-color: #0056b3;
+}
+
+.dark {
+    background-color: #111;
+    color: #eee;
+}
+
+.dark .container {
+    background-color: #222;
+}
+
+.dark h1 {
+    color: #fff;
+}
+
+.dark .image-container img {
+    border: 1px solid #444;
+}
+
+.dark .options label {
+    background-color: #333;
+    color: #eee;
+}
+
+.dark .options label:hover {
+    background-color: #444;
+}
+
+.question-number {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
