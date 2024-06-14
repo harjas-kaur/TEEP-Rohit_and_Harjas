@@ -149,8 +149,13 @@
                 } else {
                     currentQuestion++;
                     loadQuestion();
+                    clearOptions();
                 }
+                submitButton.disabled = false;
             });
+            setTimeout(() => {
+                submitButton.disabled = false; // Ensure button is re-enabled after 10 seconds
+            }, 10000); // 10 seconds
         }
         function saveToCsvOnServer() {
             fetch('/save_to_csv', {
@@ -168,6 +173,12 @@
         function showConfirmationCode(confirmation_code) {
             document.getElementById('confirmation_codeSection').style.display = 'block';
             document.getElementById('confirmation_code').textContent = confirmation_code;
+        }
+        function clearOptions() {
+            const options = document.querySelectorAll('input[name="human_answer"]');
+            options.forEach(option => {
+                option.checked = false;
+            });
         }
     </script>
 </body>
