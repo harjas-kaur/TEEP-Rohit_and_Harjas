@@ -4,30 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey</title>
-    <link rel="stylesheet" href="static/styles.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> <!-- Link to your CSS file -->
 </head>
 <body>
     <div class="container">
         <h1>Survey</h1>
         <div class="question-number">Question <span id="questionNumber">1</span></div> <!-- Display question number -->
-        <div class="image-container">
-            <div>
-                <h3>Input Image</h3>
-                <img id="inputImage" alt="Input Image">
+        
+        <div class="content">
+            <div class="left-box">
+                <h3>Inputs</h3>
+                <div class="image-container">
+                    <h4 class="centered">Input Image</h4>
+                    <img id="inputImage" alt="Input Image">
+                </div>
+                <div class="text-container">
+                    <h4>Input Text</h4>
+                    <p id="inputText">Loading...</p>
+                </div>
             </div>
-            <div id="outputImageContainer" style="display: none;">
-                <h3>Output Image</h3>
-                <img id="outputImage" alt="Output Image">
+            
+            <div class="right-box">
+                <h3>Explainability Outputs</h3>
+                <div id="outputImageContainer" class="image-container" style="display: none;">
+                    <h4>Output Image</h4>
+                    <img id="outputImage" alt="Output Image">
+                </div>
+                <div class="text-container" id="outputTextContainer" style="display: none;">
+                    <h4>Output Text</h4>
+                    <p id="outputText">Loading...</p>
+                </div>
             </div>
         </div>
-        <div class="text-container">
-            <h3>Input Text</h3>
-            <p id="inputText">Loading...</p>
-        </div>
-        <div class="text-container" id="outputTextContainer" style="display: none;">
-            <h3>Output Text</h3>
-            <p id="outputText">Loading...</p>
-        </div>
+        
         <div class="options">
             <input type="hidden" id="questionId" value="1">
             <div class="option">
@@ -55,9 +64,16 @@
                 <label for="option6">Option 6</label>
             </div>
         </div>
+        
         <button onclick="submitSurvey()">Submit</button>
+        
+        <!-- Confirmation Code Section -->
+        <div id="confirmation_codeSection" style="display: none;">
+            <h3>Thank you for completing the survey!</h3>
+            <p>Your confirmation code is: <strong id="confirmation_code"></strong></p>
+        </div>
+        
     </div>
-
     <script>
         let currentQuestion = 1;
 
@@ -128,52 +144,30 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'finished') {
-                    saveToExcelAndRedirect(); // Save to Excel and Redirect
+                    saveToCsvOnServer();
+                    showConfirmationCode(data.confirmation_code); // Show confirmation code when survey is finished
                 } else {
                     currentQuestion++;
                     loadQuestion();
                 }
             });
         }
-
-        function saveToExcelAndRedirect() {
-            saveToExcel()
-                .then(() => {
-                    window.location.href = '/finish'; // Redirect to finish page
-                })
-                .catch(error => {
-                    console.error('Error saving to Excel:', error);
-                });
-        }
-
-        function saveToExcel() {
-            const formData = new FormData();
-            formData.append('question_id', document.getElementById('questionId').value);
-            formData.append('human_answer', document.querySelector('input[name="human_answer"]:checked').value);
-
-            return fetch('/save_to_excel', {
-                method: 'POST',
-                body: formData
+        function saveToCsvOnServer() {
+            fetch('/save_to_csv', {
+                method: 'POST'
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                const url = window.URL.createObjectURL(new Blob([blob]));
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'survey_data.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
+            .then(response => response.json())
+            .then(data => {
+                console.log('CSV saved on server:', data);
             })
             .catch(error => {
-                console.error('Error saving to Excel:', error);
+                console.error('Error saving CSV on server:', error);
             });
+        }
+
+        function showConfirmationCode(confirmation_code) {
+            document.getElementById('confirmation_codeSection').style.display = 'block';
+            document.getElementById('confirmation_code').textContent = confirmation_code;
         }
     </script>
 </body>

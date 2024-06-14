@@ -3,7 +3,12 @@ from flask_cors import CORS
 from example import ObjectGenerator
 import pandas as pd
 import io
+import secrets
+import os
+from datetime import datetime
+import csv
 
+DATA_COLLECTED_DIR = './data_collected/'
 app = Flask(__name__)
 CORS(app)
 
@@ -14,17 +19,8 @@ survey_responses = []
 
 @app.route('/')
 def index():
-    return render_template('survey.html')
-
-@app.route('/finish')
-def finish():
-    # Save the survey responses to an Excel file
-    df = pd.DataFrame(survey_responses)
-    output = io.BytesIO()
-    df.to_excel(output, index=False)
-    output.seek(0)
-
-    return send_file(output, download_name='survey_responses.xlsx', as_attachment=True)
+    confirmation_code = secrets.token_hex(16)  # Generate a secure random confirmation code
+    return render_template('survey.html', confirmation_code=confirmation_code)
 
 @app.route('/input_text', methods=['GET'])
 def input_text():
@@ -43,7 +39,7 @@ def output_data():
         output['exp_image_url'] = '/output_image'
     if exp_type in ['text', 'both']:
         output['exp_text'] = demo_text
-    
+
     return jsonify(output)
 
 @app.route('/input_image', methods=['GET'])
@@ -62,7 +58,7 @@ def submit_survey():
     question_id = data.get('question_id')
     human_answer = data.get('human_answer')
     actual_answer = object_generator.get_actual_answer()
-    original_answer=object_generator.get_dummy_model_answer()
+    original_answer = object_generator.get_dummy_model_answer()
     explainability_combination = object_generator.get_explainability_type()
 
     survey_response = {
@@ -72,14 +68,26 @@ def submit_survey():
         'model_prediction': original_answer,  # Assuming the model prediction is the same as the original answer for this example
         'explainability_combination': explainability_combination
     }
-    
+
     survey_responses.append(survey_response)
     object_generator.update_object_index()
-    
+
     if len(survey_responses) >= 20:
-        return jsonify({'status': 'finished'})
-    
+        return jsonify({'status': 'finished', 'confirmation_code': secrets.token_hex(16)})
+
     return jsonify({'status': 'success'})
+
+@app.route('/save_to_csv', methods=['POST'])
+def save_to_csv():
+    df = pd.DataFrame(survey_responses)
+    csv_filename = f'survey_responses_{generate_timestamp()}.csv'
+    csv_path = os.path.join(DATA_COLLECTED_DIR, csv_filename)
+    df.to_csv(csv_path, index=False)
+    return jsonify({'status': 'success', 'csv_path': csv_path})
+
+def generate_timestamp():
+    import datetime
+    return datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 
 if __name__ == '__main__':
     app.run(debug=True)

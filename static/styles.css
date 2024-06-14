@@ -1,3 +1,6 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
 /* Global Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,33 +16,55 @@ body {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #222;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(145deg, #333, #222);
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: bold;
     color: #fff;
     margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+h3 {
+    font-family: 'Poppins', sans-serif;
 }
 
 .image-container {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    align-items: center; /* Center align items horizontally */
     margin: 20px 0;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.image-container h4 {
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .image-container img {
-    max-width: 200px;
+    max-width: 100%;
     max-height: 200px;
     border-radius: 8px;
+    display: block; /* Ensure image behaves correctly in flex layout */
+    margin: 0 auto; /* Center align image */
 }
 
 .text-container {
     margin: 20px 0;
     text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .options {
@@ -55,15 +80,17 @@ h1 {
 .options label {
     display: block;
     cursor: pointer;
-    background-color: #333;
+    background: linear-gradient(145deg, #444, #333);
     padding: 10px 20px;
-    border-radius: 4px;
-    transition: background-color 0.3s, color 0.3s;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
     color: #eee;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .options label:hover {
-    background-color: #444;
+    background: linear-gradient(145deg, #555, #444);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .options input[type="radio"] {
@@ -71,12 +98,25 @@ h1 {
 }
 
 .options input[type="radio"]:checked + label {
-    background-color: #007bff;
+    background: linear-gradient(145deg, #007bff, #0056b3);
     color: #fff;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
 }
 
 .options input[type="radio"]:checked + label:hover {
-    background-color: #0056b3;
+    background: linear-gradient(145deg, #0056b3, #004080);
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.7);
+}
+
+.question-number {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(145deg, #007bff, #0056b3);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .dark {
@@ -85,7 +125,7 @@ h1 {
 }
 
 .dark .container {
-    background-color: #222;
+    background: linear-gradient(145deg, #333, #222);
 }
 
 .dark h1 {
@@ -97,20 +137,10 @@ h1 {
 }
 
 .dark .options label {
-    background-color: #333;
+    background: linear-gradient(145deg, #444, #333);
     color: #eee;
 }
 
 .dark .options label:hover {
-    background-color: #444;
-}
-
-.question-number {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #007bff;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
+    background: linear-gradient(145deg, #555, #444);
 }
