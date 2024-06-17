@@ -12,8 +12,8 @@ DATA_COLLECTED_DIR = './data_collected/'
 app = Flask(__name__)
 CORS(app)
 
-total_respondents = 30  # Example total number of respondents
-ratio = (40, 30, 30)  # Example ratio
+total_respondents = 30  #example
+ratio = (40, 30, 30)  # example ratio
 object_generator = ObjectGenerator(total_respondents, ratio)
 survey_responses = []
 
