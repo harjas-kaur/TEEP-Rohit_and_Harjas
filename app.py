@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, send_file, request, render_template
 from flask_cors import CORS
-from example import ObjectGenerator
+from main import ObjectGenerator
 import pandas as pd
 import io
 import secrets
