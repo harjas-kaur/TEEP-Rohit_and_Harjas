@@ -16,7 +16,7 @@ from skimage.segmentation import mark_boundaries
 # In[2]:
 
 
-pip install lime
+#pip install lime
 
 
 # In[2]:
