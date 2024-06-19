@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw
 from io import BytesIO
 import random
-import image_final
+import Model.image_final as image_final
 import os
 import asyncio
 

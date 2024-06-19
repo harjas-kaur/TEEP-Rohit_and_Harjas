@@ -48,7 +48,7 @@ model = keras.models.load_model("better_classification.h5")
 
 
 from tensorflow.keras.preprocessing.image import img_to_array
-# Function that returns the classification in text format
+
 def classify_image(model, image_path, target_size=(128, 128)):
     try:
         # Open the image file
@@ -77,12 +77,21 @@ def classify_image(model, image_path, target_size=(128, 128)):
 
 
 from tensorflow.keras.preprocessing import image
+
+
+# In[8]:
+
+
 def process_image( image_path):
     img = image.load_img(image_path, target_size=(128,128))
     img_array = image.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
     img_array /= 255.0
     return img_array
+
+
+# In[9]:
+
 
 def compute_saliency_map(model, img_array, class_index):
     img_tensor = tf.convert_to_tensor(img_array, dtype=tf.float32)
@@ -95,25 +104,41 @@ def compute_saliency_map(model, img_array, class_index):
     grads = tf.reduce_mean(grads, axis=-1)[0]
     return grads.numpy()
 
+
+# In[10]:
+
+
 classes = ["damaged_infrastructure" , "damaged_nature" , "fire" , "flood" , "human_damage" , "non_damage"]
+
+
+# In[25]:
+
 
 def plot(image_path , img , saliency_map , boundary_img):
     plt.figure(figsize=(12, 6))
+
     plt.subplot(1, 2, 1)
     plt.imshow(img)
     plt.title('Original Image')
+
     plt.subplot(1, 2, 2)
     plt.imshow(saliency_map, cmap='jet')
     plt.colorbar()
     plt.title('Saliency Map')
+
     plt.show()
+
     predicted_class = classify_image(model, image_path)
     print("Predicted class:", classes[predicted_class])
+    
     plt.figure(figsize=(4,4))
     plt.imshow(boundary_img)
     plt.title('Positive Regions , using LIME')
     plt.axis('off')
     plt.show()
+
+
+# In[12]:
 
 
 explainer = lime_image.LimeImageExplainer()
@@ -126,6 +151,9 @@ def predict_fn(images):
     images = np.array(images)
     predictions = model.predict(images)
     return predictions
+
+
+# In[18]:
 
 
 def lime(image , ):
@@ -160,6 +188,15 @@ def show_lime(boundary_img):
     plt.show()
 
 
+# In[ ]:
+
+
+
+
+
+# In[26]:
+
+
 def show(image_path):
     img = image.load_img(image_path, target_size=(128,128))
     img_array = process_image(image_path)
@@ -168,5 +205,14 @@ def show(image_path):
     class_index = np.argmax(preds[0])
     smap = compute_saliency_map(model, img_array, class_index)
     plot(image_path , img , smap , boundary)
+    
+    
+
+    
+
+
+# In[27]:
+
+
 #show(r"download_2.jpeg")
 
