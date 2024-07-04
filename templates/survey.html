@@ -4,180 +4,342 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey</title>
-    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to your CSS file -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lobster&family=Poppins:wght@300&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f3e9; /* Beige background */
+            color: #4b4b4b; /* Dark grey text */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Great Vibes', cursive;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            color: #d4a373; /* Chic beige tone */
+        }
+
+        h2 {
+            font-size: 1.5em;
+            font-weight: 400;
+            color: #b5838d; /* Chic pink tone */
+        }
+
+        #predicted-class {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e5989b; /* Soft pink tone */
+            display: inline-block;
+            background-color: #f0e5cf; /* Lighter beige */
+            padding: 5px 15px;
+            border-radius: 25px; /* Oval background */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0e5cf; /* Lighter beige for container */
+            padding: 30px;
+            border-radius: 16px; /* Softer corners for chic effect */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .image-container-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .image-container {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        h3 {
+            font-family: 'Lobster', cursive;
+            font-size: 1.5em;
+            color: #e5989b; /* Soft pink tone */
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            max-height: 300px;
+            border: 1px solid #d4a373;
+            border-radius: 16px;
+            display: block;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .options {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .options select {
+            padding: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #d4a373;
+            color: #fff;
+            border: none;
+            border-radius: 25px; /* Oval dropdown */
+            transition: background-color 0.3s, transform 0.3s;
+            font-family: 'Lobster', cursive;
+            font-style: italic;
+        }
+
+        .options select:hover {
+            background-color: #b5838d;
+        }
+
+        .submit-button {
+            margin-top: 30px;
+            background-color: #d4a373;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            cursor: pointer;
+            border-radius: 25px; /* Oval button */
+            font-size: 18px;
+            transition: background-color 0.3s, transform 0.3s;
+            font-family: 'Lobster', cursive;
+            font-style: italic;
+        }
+
+        .submit-button:disabled {
+            background-color: #ccc; /* Light grey when disabled */
+            cursor: not-allowed; /* Display not-allowed cursor */
+            position: relative; /* Ensure positioning context for ::after pseudo-element */
+        }
+
+        .submit-button:disabled::after {
+            content: "Please wait for all outputs to load"; /* Text displayed on hover */
+            position: absolute;
+            top: calc(100% + 5px); /* Position below the button */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Center horizontally */
+            background-color: #d4a373; /* Background color */
+            color: #fff; /* Text color */
+            padding: 5px 10px; /* Padding around text */
+            border-radius: 8px; /* Rounded corners */
+            font-size: 14px; /* Font size */
+            pointer-events: none; /* Ignore pointer events */
+            opacity: 0; /* Initially invisible */
+            transition: opacity 0.3s; /* Smooth transition */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+
+        .submit-button:hover::after {
+            opacity: 1; /* Show message on hover */
+        }
+
+
+        .image-description {
+            font-size: 16px;
+            text-align: center;
+            position: relative;
+            margin-top: 10px;
+            color: #6d6875; /* Medium grey text */
+        }
+
+        .loading-text {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 25px; /* Oval background */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Lobster';
+            font-size: 10px;
+            font-style: bold;
+            color: #4b4b4b;
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1 id="title">Diasater Image Classification</h1>
+        <h2 id="question-number">Question 1</h2>
+        <h2 id="prediction">Predicted Class: <span id="predicted-class">Loading...</span></h2>
+    </header>
     <div class="container">
-        <h1>Survey</h1>
-        <div class="question-number">Question <span id="questionNumber">1</span></div> <!-- Display question number -->
-        
-        <div class="content">
-            <div class="left-box">
-                <h3>Inputs</h3>
-                <div class="image-container">
-                    <h4 class="centered">Input Image</h4>
-                    <img id="inputImage" alt="Input Image">
-                </div>
-                <div class="text-container">
-                    <h4>Input Text</h4>
-                    <p id="inputText">Loading...</p>
-                </div>
+        <div class="image-container-wrapper">
+            <div class="image-container">
+                <h3>Task: Image and Caption</h3>
+                <img id="input-image" src="" alt="Input Image">
+                <div id="caption-container" class="image-description">Loading caption...</div>
             </div>
-            
-            <div class="right-box">
-                <h3>Explainability Outputs</h3>
-                <div id="outputImageContainer" class="image-container" style="display: none;">
-                    <h4>Output Image</h4>
-                    <img id="outputImage" alt="Output Image">
-                </div>
-                <div class="text-container" id="outputTextContainer" style="display: none;">
-                    <h4>Output Text</h4>
-                    <p id="outputText">Loading...</p>
-                </div>
+            <div class="image-container">
+                <h3>Explanations Given by AI</h3>
+                <img id="output-image" src="" alt="Output Image">
+                <div id="explainability-container" class="image-description">Loading text explanability...</div>
+                <div id="loading-progress" class="loading-text"></div>
             </div>
         </div>
-        
         <div class="options">
-            <input type="hidden" id="questionId" value="1">
-            <div class="option">
-                <input type="radio" name="human_answer" id="option1" value="1">
-                <label for="option1">Option 1</label>
-            </div>
-            <div class="option">
-                <input type="radio" name="human_answer" id="option2" value="2">
-                <label for="option2">Option 2</label>
-            </div>
-            <div class="option">
-                <input type="radio" name="human_answer" id="option3" value="3">
-                <label for="option3">Option 3</label>
-            </div>
-            <div class="option">
-                <input type="radio" name="human_answer" id="option4" value="4">
-                <label for="option4">Option 4</label>
-            </div>
-            <div class="option">
-                <input type="radio" name="human_answer" id="option5" value="5">
-                <label for="option5">Option 5</label>
-            </div>
-            <div class="option">
-                <input type="radio" name="human_answer" id="option6" value="6">
-                <label for="option6">Option 6</label>
-            </div>
+            <p id="error-message" style="color: red;"></p>
+            <select id="options-dropdown" onchange="selectOption(this.value)">
+                <option value="" disabled selected hidden>Select an option...</option>
+                <option value="Fire">Fire</option>
+                <option value="Damaged Infrastructure">Damaged Infrastructure</option>
+                <option value="Flood">Flood</option>
+                <option value="Human Damage">Human Damage</option>
+                <option value="Damaged Nature">Damaged Nature</option>
+                <option value="No Damage">No Damage</option>
+            </select>
         </div>
-        
-        <button onclick="submitSurvey()">Submit</button>
-        
-        <!-- Confirmation Code Section -->
-        <div id="confirmation_codeSection" style="display: none;">
-            <h3>Thank you for completing the survey!</h3>
-            <p>Your confirmation code is: <strong id="confirmation_code"></strong></p>
-        </div>
-        
+        <button id="submit-button" class="submit-button" onclick="submitSurvey()" disabled>Submit</button>
     </div>
     <script>
-        let currentQuestion = 1;
+        let questionCount = 1;
+        let responses = [];
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            loadQuestion();
-        });
+        async function fetchData() {
+            try {
+                // Initialize output image loading state
+                window.outputImageLoaded = false;
 
-        function loadQuestion() {
-            document.getElementById('questionNumber').textContent = currentQuestion;
+                // Fetch input image
+                await fetchInputImage();
 
-            fetch('/input_text')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('inputText').textContent = data.original_text;
-                });
-
-            fetch('/input_image')
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    document.getElementById('inputImage').src = url;
-                });
-
-            fetch('/output_data')
-                .then(response => response.json())
-                .then(data => {
-                    const expType = data.exp_type;
-                    if (expType === 'image' || expType === 'both') {
-                        document.getElementById('outputImageContainer').style.display = 'block';
-                        fetch(data.exp_image_url)
-                            .then(response => response.blob())
-                            .then(blob => {
-                                const url = URL.createObjectURL(blob);
-                                document.getElementById('outputImage').src = url;
-                            });
-                    } else {
-                        document.getElementById('outputImageContainer').style.display = 'none';
+                // Show loading text for output image with countdown timer
+                let countdown = 25;
+                const countdownElement = document.getElementById('loading-progress');
+                countdownElement.textContent = `Loading... (${countdown}s)`;
+                const countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownElement.textContent = `Loading... (${countdown}s)`;
+                    if (countdown === 0) {
+                        clearInterval(countdownInterval);
+                        countdownElement.textContent = ''; // Clear countdown text
                     }
-                    if (expType === 'text' || expType === 'both') {
-                        document.getElementById('outputTextContainer').style.display = 'block';
-                        document.getElementById('outputText').textContent = data.exp_text;
-                    } else {
-                        document.getElementById('outputTextContainer').style.display = 'none';
-                    }
-                });
+                }, 1000);
+
+                // Fetch model answer
+                const modelResponse = await fetch('http://127.0.0.1:8000/model_answer');
+                const modelData = await modelResponse.json();
+                document.getElementById('predicted-class').textContent = modelData.prediction;
+
+                // Fetch caption
+                const captionResponse = await fetch('http://127.0.0.1:8000/caption');
+                const captionData = await captionResponse.json();
+                document.getElementById('caption-container').textContent = captionData.caption;
+
+                // Fetch text explanability
+                const explanabilityResponse = await fetch('http://127.0.0.1:8000/caption_explanability');
+                const explanabilityData = await explanabilityResponse.json();
+                document.getElementById('explainability-container').textContent = explanabilityData.caption;
+
+                // Fetch output image
+                await fetchOutputImage();
+
+                // Mark output image as loaded
+                window.outputImageLoaded = true;
+
+                // Hide loading text and reset timer
+                countdownElement.textContent = '';
+
+                // Enable submit button when output image is loaded
+                document.getElementById('submit-button').disabled = false;
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                displayErrorState();
+            }
+        }
+
+        async function fetchInputImage() {
+            const inputImageResponse = await fetch('http://127.0.0.1:8000/input_image');
+            const inputImageBlob = await inputImageResponse.blob();
+            const inputImageUrl = URL.createObjectURL(inputImageBlob);
+            document.getElementById('input-image').src = inputImageUrl;
+        }
+
+        async function fetchOutputImage() {
+            const outputImage = document.getElementById('output-image');
+            outputImage.src = ''; // Clear previous image
+            outputImage.onload = () => {
+                // Image loaded, hide loading text
+                document.getElementById('loading-progress').textContent = '';
+            };
+            const outputImageResponse = await fetch('http://127.0.0.1:8000/output_image');
+            const outputImageBlob = await outputImageResponse.blob();
+            outputImage.src = URL.createObjectURL(outputImageBlob);
+        }
+
+        function displayErrorState() {
+            document.getElementById('predicted-class').textContent = 'Error fetching prediction';
+            document.getElementById('caption-container').textContent = 'Error fetching caption';
+            document.getElementById('explainability-container').textContent = 'Error fetching explainability';
+        }
+
+        function selectOption(value) {
+            // Clear any previous error state
+            document.getElementById('error-message').textContent = '';
+
+            // Store selected option in responses array
+            responses.push({ question: questionCount, answer: value });
+
+            // Enable submit button if an option is selected
+            if (value !== '') {
+                document.getElementById('submit-button').disabled = false;
+            } else {
+                document.getElementById('submit-button').disabled = true;
+            }
         }
 
         function submitSurvey() {
-            const humanAnswer = document.querySelector('input[name="human_answer"]:checked');
-            if (!humanAnswer) {
-                alert("Please select an option.");
+            const selectedOption = document.getElementById('options-dropdown').value;
+            if (selectedOption === '') {
+                document.getElementById('error-message').textContent = 'Please select an option before submitting.';
                 return;
+            } else {
+                document.getElementById('error-message').textContent = ''; // Clear any previous error message
             }
 
-            const questionId = currentQuestion;
-            const humanAnswerValue = humanAnswer.value;
+            responses.push({ question: questionCount, answer: selectedOption });
 
-            fetch('/submit_survey', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    question_id: questionId,
-                    human_answer: humanAnswerValue
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'finished') {
-                    saveToCsvOnServer();
-                    showConfirmationCode(data.confirmation_code); // Show confirmation code when survey is finished
-                } else {
-                    currentQuestion++;
-                    loadQuestion();
-                    clearOptions();
-                }
-            });
+            if (responses.length === 20) {
+                // Proceed to finish page
+                window.location.href = 'finish.html';
+            } else {
+                questionCount++;
+                document.getElementById('question-number').textContent = `Question ${questionCount}`;
+                document.getElementById('options-dropdown').value = '';
+                document.getElementById('submit-button').disabled = true;
+                clearPreviousOutput();
+                fetchData();
+            }
         }
 
-        function saveToCsvOnServer() {
-            fetch('/save_to_csv', {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('CSV saved on server:', data);
-            })
-            .catch(error => {
-                console.error('Error saving CSV on server:', error);
-            });
+        function clearPreviousOutput() {
+            // Clear previous output image and related text
+            document.getElementById('output-image').src = '';
+            document.getElementById('explainability-container').textContent = '';
+            document.getElementById('loading-progress').textContent = '';
         }
 
-        function showConfirmationCode(confirmation_code) {
-            document.getElementById('confirmation_codeSection').style.display = 'block';
-            document.getElementById('confirmation_code').textContent = confirmation_code;
-        }
+        // Initial fetch
+        fetchData();
 
-        function clearOptions() {
-            const options = document.querySelectorAll('input[name="human_answer"]');
-            options.forEach(option => {
-                option.checked = false;
-            });
-        }
     </script>
 </body>
 </html>
